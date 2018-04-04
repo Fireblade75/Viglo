@@ -53,7 +53,7 @@ functionStatement: paramList ':' type '=>' block;
 functionCall: NAME '(' (exp (',' exp)*)? ')';
 paramList: '(' (NAME ':' type (',' NAME ':' type)*)? ')';
 
-declareStatement: (CONST | LET) NAME (('=' exp) | (':' type));
+declareStatement: varKey=(CONST | LET) NAME (('=' exp) | (':' type));
 assignStatement: variable '=' exp;
 returnStatement: RETURN exp;
 
