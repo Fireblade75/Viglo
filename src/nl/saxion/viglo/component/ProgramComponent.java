@@ -12,7 +12,6 @@ public class ProgramComponent implements VigloComponent {
 
     @Override
     public ArrayList<String> generateCode() {
-        ArrayList<String> asm = new ArrayList<>(classComponent.generateCode());
-        return asm;
+        return new ArrayList<>(classComponent.generateCode());
     }
 }
