@@ -2,6 +2,9 @@ package nl.saxion.viglo;
 
 
 import nl.saxion.viglo.component.*;
+import nl.saxion.viglo.component.expr.EmptyComponent;
+import nl.saxion.viglo.component.expr.ExprComponent;
+import nl.saxion.viglo.component.expr.NotExprComponent;
 
 public class VigloCodeVisitor extends VigloBaseVisitor<VigloComponent> {
 
@@ -39,26 +42,29 @@ public class VigloCodeVisitor extends VigloBaseVisitor<VigloComponent> {
 
     @Override
     public VigloComponent visitStructBlock(VigloParser.StructBlockContext ctx) {
-        return new StructComponent();
+        String className = ctx.NAME().getText();
+        BlockComponent blockComponent = visitBlock(ctx.block());
+        return new StructComponent(className, blockComponent);
     }
 
     @Override
     public VigloComponent visitDeclareStatement(VigloParser.DeclareStatementContext ctx) {
-        Value value;
         String label = ctx.NAME().getText();
         boolean constant = ctx.varKey.getText().equals("const");
         if(ctx.type()!=null) {
-            value = new Value(null, ctx.type().getText(), constant);
+            Value value = new Value(ctx.type().getText(), constant);
+            scope.addValue(label, value);
+            return new EmptyComponent();
         } else {
-            //TODO assign value
-            value = null;
+            ExprComponent expr = (ExprComponent) visit(ctx.exp());
+            Value value = expr.getValue();
+            scope.addValue(label, value);
+            return new AssignComponent(expr);
         }
-        scope.addValue(label, value);
-        return super.visitDeclareStatement(ctx);
     }
 
     @Override
-    public VigloComponent visitBlock(VigloParser.BlockContext ctx) {
+    public BlockComponent visitBlock(VigloParser.BlockContext ctx) {
         scope = new Scope(scope);
         BlockComponent blockComponent = new BlockComponent();
         for(VigloParser.StatementContext statement : ctx.statement()) {
@@ -67,4 +73,11 @@ public class VigloCodeVisitor extends VigloBaseVisitor<VigloComponent> {
         scope = scope.getParent();
         return blockComponent;
     }
+
+    @Override
+    public NotExprComponent visitNotExpression(VigloParser.NotExpressionContext ctx) {
+        ExprComponent childComponent = (ExprComponent) visit(ctx.exp());
+        return new NotExprComponent(childComponent);
+    }
+
 }

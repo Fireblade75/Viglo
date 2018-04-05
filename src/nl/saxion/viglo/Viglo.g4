@@ -31,20 +31,21 @@ exp: NULL                           #NullExpression
     | chainExp                      #ChainExpression
     | exp math_operator exp         #MathExpression
     | exp eq_operator exp           #EqualityExpression
-    | notStatement                  #NotExpression
+    | OP_NOT exp                    #NotExpression
     | exp logic_operator exp        #LogicExpression
     | arrayCreate                   #ArrayExpression
     | listCreate                    #ListExpression
     ;
 
 chainExp: (variable | functionCall) ('.' (variable | functionCall))*;
-notStatement: OP_NOT exp;
 
 ifStatement:
     IF_MARK exp block
-    ( ':?' exp block )*
-    ( ':' block)?
+    elseifStatement*
+    elseStatement?
     ;
+elseifStatement: ( ':?' exp block );
+elseStatement: ( ':' block);
 
 forStatement: FOR NAME IN exp block;
 
@@ -116,7 +117,7 @@ OP_NOT: 'not';
 ARRAY: 'array';
 LIST: 'list';
 
-STRUCT: 'strct';
+STRUCT: 'struct';
 CLASS: 'class';
 FUNC: 'func';
 IMPORT: 'import';
