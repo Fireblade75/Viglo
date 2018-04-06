@@ -2,9 +2,7 @@ package nl.saxion.viglo;
 
 
 import nl.saxion.viglo.component.*;
-import nl.saxion.viglo.component.expr.EmptyComponent;
-import nl.saxion.viglo.component.expr.ExprComponent;
-import nl.saxion.viglo.component.expr.NotExprComponent;
+import nl.saxion.viglo.component.expr.*;
 
 public class VigloCodeVisitor extends VigloBaseVisitor<VigloComponent> {
 
@@ -59,7 +57,7 @@ public class VigloCodeVisitor extends VigloBaseVisitor<VigloComponent> {
             ExprComponent expr = (ExprComponent) visit(ctx.exp());
             Value value = expr.getValue();
             scope.addValue(label, value);
-            return new AssignComponent(expr);
+            return new AssignComponent(expr, scope.getIndex(label));
         }
     }
 
@@ -75,9 +73,27 @@ public class VigloCodeVisitor extends VigloBaseVisitor<VigloComponent> {
     }
 
     @Override
+    public VigloComponent visitAssignStatement(VigloParser.AssignStatementContext ctx) {
+        ExprComponent expr = (ExprComponent) visit(ctx.exp());
+        String label = ctx.variable().getText();
+        return new AssignComponent(expr, scope.getIndex(label));
+    }
+
+    @Override
     public NotExprComponent visitNotExpression(VigloParser.NotExpressionContext ctx) {
         ExprComponent childComponent = (ExprComponent) visit(ctx.exp());
         return new NotExprComponent(childComponent);
     }
 
+    @Override
+    public VigloComponent visitIntLiteral(VigloParser.IntLiteralContext ctx) {
+        int val = Integer.parseInt(ctx.INT_LITERAL().getText());
+        return new IntLiteral(val);
+    }
+
+    @Override
+    public VigloComponent visitBoolLiteral(VigloParser.BoolLiteralContext ctx) {
+        boolean val = Boolean.parseBoolean(ctx.BOOL_LITERAL().getText());
+        return new BoolLiteral(val);
+    }
 }

@@ -13,6 +13,10 @@ public abstract class ExprComponent implements VigloComponent {
         value = new Value("int", false);
     }
 
+    public ExprComponent(Value value) {
+        value = value;
+    }
+
     abstract boolean isStatic();
 
     public Value getValue() {

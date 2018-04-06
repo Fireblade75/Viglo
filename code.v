@@ -2,6 +2,8 @@ import 'string'
 
 struct Animal() {
     const v: int
+    v = 8
+    t = false
 }
 
 <~
