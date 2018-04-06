@@ -1,6 +1,5 @@
 package nl.saxion.viglo.component;
 
-import nl.saxion.viglo.Scope;
 import nl.saxion.viglo.component.expr.ExprComponent;
 
 import java.util.ArrayList;

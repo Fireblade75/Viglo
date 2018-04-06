@@ -7,7 +7,7 @@ public class Scope {
 
     private Scope parent = null;
     private HashMap<String, Value> valueMap = new HashMap<>();
-    private ArrayList<String> labelList= new ArrayList();
+    private ArrayList<String> labelList = new ArrayList<>();
 
     public Scope() {
 
@@ -15,6 +15,7 @@ public class Scope {
 
     public Scope(Scope scope) {
         parent = scope;
+        labelList.addAll(scope.labelList);
     }
 
     public void addValue(String label, Value value) {
@@ -33,13 +34,10 @@ public class Scope {
     }
 
     public int getIndex(String label) {
-        if(valueMap.containsKey(label)) {
-            return labelList.indexOf(label);
-        } else if(parent!=null) {
-            return parent.getIndex(label) + 1;
-        } else {
-            return -1;
+        if(labelList.contains(label)) {
+            return labelList.indexOf(label) + 1;
         }
+        return -1;
     }
 
     public Scope getParent() {
