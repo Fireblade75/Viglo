@@ -1,10 +1,17 @@
 package nl.saxion.viglo.component;
 
+import nl.saxion.viglo.Scope;
+
 import java.util.ArrayList;
 
 public class BlockComponent implements VigloComponent {
 
     private ArrayList<VigloComponent> vigloComponents = new ArrayList<>();
+    private Scope scope;
+
+    public BlockComponent(Scope scope) {
+        this.scope = scope;
+    }
 
     @Override
     public ArrayList<String> generateCode() {
@@ -17,5 +24,9 @@ public class BlockComponent implements VigloComponent {
 
     public void add(VigloComponent component) {
         vigloComponents.add(component);
+    }
+
+    public Scope getScope() {
+        return scope;
     }
 }

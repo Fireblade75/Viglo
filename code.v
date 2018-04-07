@@ -1,9 +1,9 @@
 import 'string'
 
 struct Animal() {
-    const v: int
-    v = 8
-    let t = false
+    let b = 101
+    echo true
+    echo 'v'
 }
 
 <~

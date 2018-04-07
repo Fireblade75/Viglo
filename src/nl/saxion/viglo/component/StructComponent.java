@@ -23,16 +23,19 @@ public class StructComponent extends BaseClassComponent {
     }
 
     private ArrayList<String> createConstructor() {
-        ArrayList<String> code = new ArrayList<>();
-        code.add("; struct initializer");
-        code.add(".method public <init>()V");
-        code.add("\taload_0");
-        code.add("\tinvokenonvirtual java/lang/Object/<init>()V");
+        int locals = blockComponent.getScope().getLocals() + 1;
+        ArrayList<String> asm = new ArrayList<>();
+        asm.add("; struct initializer");
+        asm.add(".method public <init>()V");
+        asm.add("\t.limit stack 10");
+        asm.add("\t.limit locals " + locals);
+        asm.add("\taload_0");
+        asm.add("\tinvokenonvirtual java/lang/Object/<init>()V");
 
-        code.addAll(blockComponent.generateCode());
+        asm.addAll(blockComponent.generateCode());
 
-        code.add("\treturn");
-        code.add(".end method\n");
-        return code;
+        asm.add("\treturn");
+        asm.add(".end method\n");
+        return asm;
     }
 }

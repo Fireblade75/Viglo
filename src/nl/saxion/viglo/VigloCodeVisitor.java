@@ -46,6 +46,18 @@ public class VigloCodeVisitor extends VigloBaseVisitor<VigloComponent> {
     }
 
     @Override
+    public BlockComponent visitBlock(VigloParser.BlockContext ctx) {
+        scope = new Scope(scope);
+        BlockComponent blockComponent = new BlockComponent(scope);
+        for(VigloParser.StatementContext statement : ctx.statement()) {
+            blockComponent.add(visit(statement));
+        }
+        scope.close();
+        scope = scope.getParent();
+        return blockComponent;
+    }
+
+    @Override
     public VigloComponent visitDeclareStatement(VigloParser.DeclareStatementContext ctx) {
         String label = ctx.NAME().getText();
         boolean constant = ctx.varKey.getText().equals("const");
@@ -62,21 +74,16 @@ public class VigloCodeVisitor extends VigloBaseVisitor<VigloComponent> {
     }
 
     @Override
-    public BlockComponent visitBlock(VigloParser.BlockContext ctx) {
-        scope = new Scope(scope);
-        BlockComponent blockComponent = new BlockComponent();
-        for(VigloParser.StatementContext statement : ctx.statement()) {
-            blockComponent.add(visit(statement));
-        }
-        scope = scope.getParent();
-        return blockComponent;
-    }
-
-    @Override
     public VigloComponent visitAssignStatement(VigloParser.AssignStatementContext ctx) {
         ExprComponent expr = (ExprComponent) visit(ctx.exp());
         String label = ctx.variable().getText();
         return new AssignComponent(expr, scope.getIndex(label));
+    }
+
+    @Override
+    public VigloComponent visitEchoStatement(VigloParser.EchoStatementContext ctx) {
+        ExprComponent expr = (ExprComponent) visit(ctx.exp());
+        return new EchoComponent(expr);
     }
 
     @Override
@@ -86,14 +93,40 @@ public class VigloCodeVisitor extends VigloBaseVisitor<VigloComponent> {
     }
 
     @Override
-    public VigloComponent visitIntLiteral(VigloParser.IntLiteralContext ctx) {
+    public IntLiteral visitIntLiteral(VigloParser.IntLiteralContext ctx) {
         int val = Integer.parseInt(ctx.INT_LITERAL().getText());
         return new IntLiteral(val);
     }
 
     @Override
-    public VigloComponent visitBoolLiteral(VigloParser.BoolLiteralContext ctx) {
+    public BoolLiteral visitBoolLiteral(VigloParser.BoolLiteralContext ctx) {
         boolean val = Boolean.parseBoolean(ctx.BOOL_LITERAL().getText());
         return new BoolLiteral(val);
+    }
+
+    @Override
+    public CharLiteral visitCharLiteral(VigloParser.CharLiteralContext ctx) {
+        char val = ctx.CHAR_STRING().getText().charAt(1);
+        return new CharLiteral(val);
+    }
+
+    @Override
+    public FloatLiteral visitFloatLiteral(VigloParser.FloatLiteralContext ctx) {
+        float val = Float.parseFloat(ctx.FLOAT_LITERAL().getText());
+        return new FloatLiteral(val);
+    }
+
+    @Override
+    public DoubleLiteral visitDoubleLiteral(VigloParser.DoubleLiteralContext ctx) {
+        double val = Float.parseFloat(ctx.DOUBLE_LITERAL().getText());
+        return new DoubleLiteral(val);
+    }
+
+    @Override
+    public VigloComponent visitLongLiteral(VigloParser.LongLiteralContext ctx) {
+        String longStr = ctx.LONG_LITERAL().getText();
+        longStr = longStr.substring(0, longStr.length() - 1);
+        long val = Long.parseLong(longStr);
+        return new LongLiteral(val);
     }
 }

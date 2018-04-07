@@ -4,13 +4,13 @@ import nl.saxion.viglo.Value;
 
 import java.util.ArrayList;
 
-public class IntLiteral extends ExprComponent {
+public class DoubleLiteral extends ExprComponent {
 
-    int intValue;
+    double doubleValue;
 
-    public IntLiteral(int intValue) {
-        super(new Value("int", false));
-        this.intValue = intValue;
+    public DoubleLiteral(double doubleValue) {
+        super(new Value("float", false));
+        this.doubleValue = doubleValue;
     }
 
     @Override
@@ -21,7 +21,7 @@ public class IntLiteral extends ExprComponent {
     @Override
     public ArrayList<String> generateCode() {
         ArrayList<String> asm = new ArrayList<>();
-        asm.add("\tbipush " + intValue);
+        asm.add("\tldc2_w " + doubleValue);
         return asm;
     }
 }

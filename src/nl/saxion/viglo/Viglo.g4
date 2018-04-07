@@ -19,6 +19,7 @@ statement: declareStatement
     | ifStatement
     | forStatement
     | chainExp
+    | echoStatement
     ;
 
 exp: NULL                           #NullExpression
@@ -57,6 +58,7 @@ paramList: '(' (NAME ':' type (',' NAME ':' type)*)? ')';
 declareStatement: varKey=(CONST | LET) NAME (('=' exp) | (':' type));
 assignStatement: variable '=' exp;
 returnStatement: RETURN exp;
+echoStatement: ECHO exp;
 
 arrayCreate: ARRAY '<' type '>' '(' (exp (',' exp)*)? ')';
 listCreate: LIST '<' type '>' '(' (exp (',' exp)*)? ')';
@@ -84,7 +86,6 @@ INT_LITERAL: [1-9][0-9]* | '0';
 FLOAT_LITERAL: [0-9]+'.'[0-9]+'f';
 DOUBLE_LITERAL: [0-9]+'.'[0-9]+;
 LONG_LITERAL: [1-9][0-9]*'l' | '0l';
-
 BOOL_LITERAL: 'true' | 'false';
 
 INT: 'int';
@@ -116,6 +117,7 @@ OP_NOT: 'not';
 
 ARRAY: 'array';
 LIST: 'list';
+ECHO: 'echo';
 
 STRUCT: 'struct';
 CLASS: 'class';

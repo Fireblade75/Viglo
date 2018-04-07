@@ -8,6 +8,7 @@ public class Scope {
     private Scope parent = null;
     private HashMap<String, Value> valueMap = new HashMap<>();
     private ArrayList<String> labelList = new ArrayList<>();
+    private int childLocals = 0;
 
     public Scope() {
 
@@ -42,5 +43,23 @@ public class Scope {
 
     public Scope getParent() {
         return parent;
+    }
+
+    public boolean hasParent() {
+        return parent != null;
+    }
+
+    public int getLocals() {
+        return valueMap.size() + childLocals + 1;
+    }
+
+    public void addChildLocals(int locals) {
+        this.childLocals += locals;
+    }
+
+    public void close() {
+        if(hasParent()) {
+            parent.addChildLocals(valueMap.size());
+        }
     }
 }
