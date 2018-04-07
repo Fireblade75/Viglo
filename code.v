@@ -1,9 +1,9 @@
 import 'string'
 
 struct Animal() {
-    let b = 101
-    echo true
-    echo 'v'
+    let ruby = 7
+    let safire = ruby
+    echo safire
 }
 
 <~

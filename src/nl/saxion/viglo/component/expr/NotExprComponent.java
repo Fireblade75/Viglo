@@ -1,5 +1,7 @@
 package nl.saxion.viglo.component.expr;
 
+import nl.saxion.viglo.Value;
+
 import java.util.ArrayList;
 
 public class NotExprComponent extends ExprComponent {
@@ -7,6 +9,7 @@ public class NotExprComponent extends ExprComponent {
     private ExprComponent childExpr;
 
     public NotExprComponent(ExprComponent childExpr) {
+        super(new Value("boolean", childExpr.isStatic()));
         this.childExpr = childExpr;
     }
 

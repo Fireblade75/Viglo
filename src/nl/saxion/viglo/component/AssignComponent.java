@@ -18,14 +18,21 @@ public class AssignComponent implements VigloComponent {
     public ArrayList<String> generateCode() {
         ArrayList<String> asm = new ArrayList<>();
         asm.addAll(expr.generateCode());
-        if(expr instanceof IntLiteral || expr instanceof BoolLiteral || expr instanceof CharLiteral) {
-            asm.add("\tistore " + localId);
-        } else if(expr instanceof LongLiteral) {
-            asm.add("\tlstore " + localId);
-        } else if(expr instanceof FloatLiteral) {
-            asm.add("\tfstore " + localId);
-        } else if(expr instanceof DoubleLiteral) {
-            asm.add("\tdstore " + localId);
+        switch (expr.getValue().getRawType()) {
+            case "int":
+                asm.add("\tistore " + localId);
+                break;
+            case "long":
+                asm.add("\tlstore " + localId);
+                break;
+            case "float":
+                asm.add("\tfstore " + localId);
+                break;
+            case "double":
+                asm.add("\tdstore " + localId);
+                break;
+            default:
+                throw new UnsupportedOperationException();
         }
         return asm;
     }

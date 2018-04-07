@@ -38,7 +38,9 @@ exp: NULL                           #NullExpression
     | listCreate                    #ListExpression
     ;
 
-chainExp: (variable | functionCall) ('.' (variable | functionCall))*;
+chainExp: chainPart* chainTail;
+chainPart: (variable | functionCall) '.';
+chainTail: (variable | functionCall);
 
 ifStatement:
     IF_MARK exp block

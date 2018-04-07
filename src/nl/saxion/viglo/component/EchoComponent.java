@@ -17,18 +17,27 @@ public class EchoComponent implements VigloComponent {
         ArrayList<String> asm = new ArrayList<>();
         asm.add("\tgetstatic java/lang/System/out Ljava/io/PrintStream;");
         asm.addAll(expr.generateCode());
-        if(expr instanceof IntLiteral) {
-            asm.add("\tinvokevirtual java/io/PrintStream.println(I)V");
-        } else if(expr instanceof BoolLiteral) {
-            asm.add("\tinvokevirtual java/io/PrintStream.println(Z)V");
-        } else if(expr instanceof CharLiteral) {
-            asm.add("\tinvokevirtual java/io/PrintStream.println(C)V");
-        } else if(expr instanceof LongLiteral) {
-            asm.add("\tinvokevirtual java/io/PrintStream.println(J)V");
-        } else if(expr instanceof FloatLiteral) {
-            asm.add("\tinvokevirtual java/io/PrintStream.println(F)V");
-        } else if(expr instanceof DoubleLiteral) {
-            asm.add("\tinvokevirtual java/io/PrintStream.println(D)V");
+        switch (expr.getValue().getType()) {
+            case "int":
+                asm.add("\tinvokevirtual java/io/PrintStream.println(I)V");
+                break;
+            case "bool":
+                asm.add("\tinvokevirtual java/io/PrintStream.println(Z)V");
+                break;
+            case "char":
+                asm.add("\tinvokevirtual java/io/PrintStream.println(C)V");
+                break;
+            case "long":
+                asm.add("\tinvokevirtual java/io/PrintStream.println(J)V");
+                break;
+            case "float":
+                asm.add("\tinvokevirtual java/io/PrintStream.println(F)V");
+                break;
+            case "double":
+                asm.add("\tinvokevirtual java/io/PrintStream.println(D)V");
+                break;
+            default:
+                throw new UnsupportedOperationException();
         }
         return asm;
     }

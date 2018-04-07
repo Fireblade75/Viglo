@@ -74,6 +74,21 @@ public class VigloCodeVisitor extends VigloBaseVisitor<VigloComponent> {
     }
 
     @Override
+    public VigloComponent visitChainExp(VigloParser.ChainExpContext ctx) {
+        if(ctx.chainPart().size()>0) {
+            throw new UnsupportedOperationException();
+        } else {
+            return visit(ctx.chainTail());
+        }
+    }
+
+    @Override
+    public VigloComponent visitVariable(VigloParser.VariableContext ctx) {
+        String label = ctx.NAME().getText();
+        return new VariableComponent(scope.getValue(label), scope.getIndex(label));
+    }
+
+    @Override
     public VigloComponent visitAssignStatement(VigloParser.AssignStatementContext ctx) {
         ExprComponent expr = (ExprComponent) visit(ctx.exp());
         String label = ctx.variable().getText();

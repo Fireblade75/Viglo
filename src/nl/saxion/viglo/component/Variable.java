@@ -8,7 +8,6 @@ public class Variable implements VigloComponent {
     private String label;
     private String type;
 
-
     public Variable(String label, String type) {
         this.label = label;
         this.type = type;
