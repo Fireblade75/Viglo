@@ -1,15 +1,11 @@
 import 'string'
 
 struct Animal() {
-    let ruby = 7
-    let safire = ruby
-    echo safire
-}
+    let bird = 20
+    let cat = 5
+    echo bird / cat                                 ~ 4
+    echo bird - cat + (cat * cat)                   ~ 40
 
-<~
-class Animal {
-    const legs = 4
-
-    func main() =>
+    let t = true and (false or true) or false
+    echo t                                          ~ true
 }
-~>

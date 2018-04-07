@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class CharLiteral extends ExprComponent {
 
-    char charValue;
+    private char charValue;
 
     public CharLiteral(char charValue) {
         super(new Value("char", false));

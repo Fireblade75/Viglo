@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class IntLiteral extends ExprComponent {
 
-    int intValue;
+    private int intValue;
 
     public IntLiteral(int intValue) {
         super(new Value("int", false));

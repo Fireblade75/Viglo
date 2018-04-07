@@ -9,6 +9,7 @@ public class Scope {
     private HashMap<String, Value> valueMap = new HashMap<>();
     private ArrayList<String> labelList = new ArrayList<>();
     private int childLocals = 0;
+    private int labelCounter = 0;
 
     public Scope() {
 
@@ -60,6 +61,14 @@ public class Scope {
     public void close() {
         if(hasParent()) {
             parent.addChildLocals(valueMap.size());
+        }
+    }
+
+    public String getLabel () {
+        if(hasParent()) {
+            return parent.getLabel();
+        } else {
+            return  "#_" + (labelCounter++);
         }
     }
 }

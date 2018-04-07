@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class BoolLiteral extends ExprComponent {
 
-    boolean boolValue;
+    private boolean boolValue;
 
     public BoolLiteral(boolean boolValue) {
         super(new Value("bool", false));

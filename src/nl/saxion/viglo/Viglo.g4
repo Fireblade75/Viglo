@@ -22,20 +22,21 @@ statement: declareStatement
     | echoStatement
     ;
 
-exp: NULL                           #NullExpression
-    | boolLiteral                   #BoolExpression
-    | numberLiteral                 #NumberExpression
-    | stringLiteral                 #StringExpression
-    | charLiteral                   #CharExpression
-    | rangeLiteral                  #RangeExpression
-    | functionStatement             #FunctionExpression
-    | chainExp                      #ChainExpression
-    | exp math_operator exp         #MathExpression
-    | exp eq_operator exp           #EqualityExpression
-    | OP_NOT exp                    #NotExpression
-    | exp logic_operator exp        #LogicExpression
-    | arrayCreate                   #ArrayExpression
-    | listCreate                    #ListExpression
+exp: NULL                                   #NullExpression
+    | boolLiteral                           #BoolExpression
+    | numberLiteral                         #NumberExpression
+    | stringLiteral                         #StringExpression
+    | charLiteral                           #CharExpression
+    | rangeLiteral                          #RangeExpression
+    | '(' exp ')'                           #BracketExpression
+    | functionStatement                     #FunctionExpression
+    | chainExp                              #ChainExpression
+    | left=exp math_operator right=exp      #MathExpression
+    | left=exp eq_operator right=exp        #EqualityExpression
+    | OP_NOT exp                            #NotExpression
+    | left=exp logic_operator right=exp     #LogicExpression
+    | arrayCreate                           #ArrayExpression
+    | listCreate                            #ListExpression
     ;
 
 chainExp: chainPart* chainTail;

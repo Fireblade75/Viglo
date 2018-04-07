@@ -104,7 +104,28 @@ public class VigloCodeVisitor extends VigloBaseVisitor<VigloComponent> {
     @Override
     public NotExprComponent visitNotExpression(VigloParser.NotExpressionContext ctx) {
         ExprComponent childComponent = (ExprComponent) visit(ctx.exp());
-        return new NotExprComponent(childComponent);
+        return new NotExprComponent(childComponent, scope);
+    }
+
+    @Override
+    public VigloComponent visitLogicExpression(VigloParser.LogicExpressionContext ctx) {
+        ExprComponent leftExpr = (ExprComponent) visit(ctx.left);
+        ExprComponent rightExpr = (ExprComponent) visit(ctx.right);
+        String op = ctx.logic_operator().getText();
+        return new LogicExpression(leftExpr, rightExpr, op, scope);
+    }
+
+    @Override
+    public VigloComponent visitMathExpression(VigloParser.MathExpressionContext ctx) {
+        ExprComponent leftExpr = (ExprComponent) visit(ctx.left);
+        ExprComponent rightExpr = (ExprComponent) visit(ctx.right);
+        String op = ctx.math_operator().getText();
+        return new MathExpression(leftExpr, rightExpr, op);
+    }
+
+    @Override
+    public VigloComponent visitBracketExpression(VigloParser.BracketExpressionContext ctx) {
+        return visit(ctx.exp());
     }
 
     @Override

@@ -9,7 +9,7 @@ public class LongLiteral extends ExprComponent {
     long longValue;
 
     public LongLiteral(long longValue) {
-        super(new Value("int", false));
+        super(new Value("long", false));
         this.longValue = longValue;
     }
 

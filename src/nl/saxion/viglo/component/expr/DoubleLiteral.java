@@ -6,10 +6,10 @@ import java.util.ArrayList;
 
 public class DoubleLiteral extends ExprComponent {
 
-    double doubleValue;
+    private double doubleValue;
 
     public DoubleLiteral(double doubleValue) {
-        super(new Value("float", false));
+        super(new Value("double", false));
         this.doubleValue = doubleValue;
     }
 
