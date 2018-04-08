@@ -1,6 +1,6 @@
 package nl.saxion.viglo.component.expr;
 
-import nl.saxion.viglo.Value;
+import nl.saxion.viglo.type.Value;
 
 import java.util.ArrayList;
 

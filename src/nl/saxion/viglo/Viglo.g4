@@ -7,9 +7,10 @@ importStatement: IMPORT IMPORT_LITERAL;
 
 
 structBlock: STRUCT NAME (':' functionCall (',' functionCall)*)? paramList block;
-classBlock: CLASS NAME classList? block;
+classBlock: CLASS NAME classList? rootBlock;
 classList: ':' NAME (',' NAME)*;
 
+rootBlock: block;
 block: '{' statement* '}';
 
 statement: declareStatement
@@ -56,7 +57,9 @@ forStatement: FOR NAME IN exp block;
 declareFunction: FUNC NAME functionStatement;
 functionStatement: paramList ':' type '=>' block;
 functionCall: NAME '(' (exp (',' exp)*)? ')';
-paramList: '(' (NAME ':' type (',' NAME ':' type)*)? ')';
+paramList: '(' (paramItem (',' paramItem)*)? ')';
+paramItem: NAME ':' type;
+
 
 declareStatement: varKey=(CONST | LET) NAME (('=' exp) | (':' type));
 assignStatement: variable '=' exp;

@@ -1,5 +1,8 @@
 package nl.saxion.viglo;
 
+import nl.saxion.viglo.component.FunctionComponent;
+import nl.saxion.viglo.type.Value;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -7,16 +10,19 @@ public class Scope {
 
     private Scope parent = null;
     private HashMap<String, Value> valueMap = new HashMap<>();
+    private HashMap<String, FunctionDescriptor> functionMap = new HashMap<>();
     private ArrayList<String> labelList = new ArrayList<>();
     private int childLocals = 0;
     private int labelCounter = 0;
+    private String className;
 
-    public Scope() {
-
+    public Scope(String className) {
+        this.className = className;
     }
 
     public Scope(Scope scope) {
         parent = scope;
+        className = scope.className;
         labelList.addAll(scope.labelList);
     }
 
@@ -69,6 +75,18 @@ public class Scope {
             return parent.getLabel();
         } else {
             return  "#_" + (labelCounter++);
+        }
+    }
+
+    public void addFunction(FunctionComponent function) {
+        functionMap.put(function.getName(), new FunctionDescriptor(function, className));
+    }
+
+    public FunctionDescriptor getFunction(String name) {
+        if(hasParent()) {
+            return parent.getFunction(name);
+        } else {
+            return functionMap.get(name);
         }
     }
 }

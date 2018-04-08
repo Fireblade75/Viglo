@@ -1,16 +1,20 @@
 package nl.saxion.viglo.component;
 
+import nl.saxion.viglo.Scope;
 import nl.saxion.viglo.component.expr.*;
+import nl.saxion.viglo.type.FunctionValue;
 
 import java.util.ArrayList;
 
-public class AssignComponent implements VigloComponent {
+public class AssignStatement implements VigloComponent {
 
     private ExprComponent expr;
+    private Scope scope;
     private int localId;
 
-    public AssignComponent(ExprComponent expr, int localId) {
+    public AssignStatement(ExprComponent expr, Scope scope, int localId) {
         this.expr = expr;
+        this.scope = scope;
         this.localId = localId;
     }
 
@@ -18,7 +22,9 @@ public class AssignComponent implements VigloComponent {
     public ArrayList<String> generateCode() {
         ArrayList<String> asm = new ArrayList<>();
         asm.addAll(expr.generateCode());
-        switch (expr.getValue().getRawType()) {
+        String expType = expr.getValue().getRawType(scope);
+
+        switch (expType) {
             case "int":
                 asm.add("\tistore " + localId);
                 break;

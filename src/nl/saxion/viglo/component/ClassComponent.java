@@ -2,11 +2,13 @@ package nl.saxion.viglo.component;
 
 import java.util.ArrayList;
 
-public class ClassComponent implements VigloComponent {
+public class ClassComponent extends BaseClassComponent {
     private String className;
+    private RootBlockComponent block;
 
-    public ClassComponent(String className) {
+    public ClassComponent(String className, RootBlockComponent block) {
         this.className = className;
+        this.block = block;
     }
 
     @Override
@@ -14,8 +16,11 @@ public class ClassComponent implements VigloComponent {
         ArrayList<String> code = new ArrayList<>();
         code.add(".class public "+className);
         code.add(".super java/lang/Object\n");
-        code.addAll(getDefaultConstructor());
-        code.addAll(getDefaultMain());
+        code.addAll(block.generateCode());
+        if(!block.hasSimpleConstructor()) {
+            code.addAll(getDefaultConstructor());
+        }
+        code.addAll(getDefaultMain(className));
 
         return code;
     }
@@ -28,22 +33,6 @@ public class ClassComponent implements VigloComponent {
         code.add("\tinvokenonvirtual java/lang/Object/<init>()V");
         code.add("\treturn");
         code.add(".end method\n");
-
-        return code;
-    }
-
-    private ArrayList<String> getDefaultMain() {
-        ArrayList<String> code = new ArrayList<>();
-        code.add("; standard main");
-        code.add(".method public static main([Ljava/lang/String;)V");
-        code.add("\t.limit stack 10");
-        code.add("\t.limit locals 10");
-        code.add("\tnew "+className);
-        code.add("\tdup");
-        code.add("\tinvokespecial "+className + "/<init>()V");
-        code.add("\treturn");
-        code.add(".end method\n");
-
         return code;
     }
 }

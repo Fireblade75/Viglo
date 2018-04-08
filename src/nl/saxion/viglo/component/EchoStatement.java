@@ -1,15 +1,18 @@
 package nl.saxion.viglo.component;
 
+import nl.saxion.viglo.Scope;
 import nl.saxion.viglo.component.expr.*;
 
 import java.util.ArrayList;
 
-public class EchoComponent implements VigloComponent {
+public class EchoStatement implements VigloComponent {
 
     private ExprComponent expr;
+    private Scope scope;
 
-    public EchoComponent(ExprComponent expr) {
+    public EchoStatement(ExprComponent expr, Scope scope) {
         this.expr = expr;
+        this.scope = scope;
     }
 
     @Override
@@ -17,7 +20,7 @@ public class EchoComponent implements VigloComponent {
         ArrayList<String> asm = new ArrayList<>();
         asm.add("\tgetstatic java/lang/System/out Ljava/io/PrintStream;");
         asm.addAll(expr.generateCode());
-        switch (expr.getValue().getType()) {
+        switch (expr.getValue().getType(scope)) {
             case "int":
                 asm.add("\tinvokevirtual java/io/PrintStream.println(I)V");
                 break;

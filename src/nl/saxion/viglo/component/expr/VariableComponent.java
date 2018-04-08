@@ -1,26 +1,27 @@
 package nl.saxion.viglo.component.expr;
 
-import nl.saxion.viglo.Value;
-import nl.saxion.viglo.component.Variable;
-import nl.saxion.viglo.component.VigloComponent;
+import nl.saxion.viglo.Scope;
+import nl.saxion.viglo.type.Value;
 
 import java.util.ArrayList;
 
 public class VariableComponent extends ExprComponent {
 
     private Value value;
+    private Scope scope;
     private int localId;
 
-    public VariableComponent(Value value, int localId) {
+    public VariableComponent(Value value, Scope scope, int localId) {
         super(value);
         this.value = value;
+        this.scope = scope;
         this.localId = localId;
     }
 
     @Override
     public ArrayList<String> generateCode() {
         ArrayList<String> asm = new ArrayList<>();
-        switch (value.getRawType()) {
+        switch (value.getRawType(scope)) {
             case "int":
                 asm.add("\tiload " + localId);
                 break;

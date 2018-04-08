@@ -1,4 +1,6 @@
-package nl.saxion.viglo;
+package nl.saxion.viglo.type;
+
+import nl.saxion.viglo.Scope;
 
 public class Value {
     private String type;
@@ -12,8 +14,9 @@ public class Value {
     /**
      * Get the type of the variable in the code itself
      * @return the name of the type
+     * @param scope
      */
-    public String getType() {
+    public String getType(Scope scope) {
         return type;
     }
 
@@ -22,7 +25,7 @@ public class Value {
      * For example, booleans are represented by integers in the bytecode
      * @return the name of the type
      */
-    public String getRawType() {
+    public String getRawType(Scope scope) {
         if(type.equals("bool") || type.equals("char")) {
             return "int";
         } else {

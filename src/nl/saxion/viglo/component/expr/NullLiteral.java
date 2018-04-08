@@ -4,13 +4,9 @@ import nl.saxion.viglo.type.Value;
 
 import java.util.ArrayList;
 
-public class BoolLiteral extends ExprComponent {
-
-    private boolean boolValue;
-
-    public BoolLiteral(boolean boolValue) {
-        super(new Value("bool", false));
-        this.boolValue = boolValue;
+public class NullLiteral extends ExprComponent {
+    public NullLiteral() {
+        super(new Value("object", false));
     }
 
     @Override
@@ -21,7 +17,7 @@ public class BoolLiteral extends ExprComponent {
     @Override
     public ArrayList<String> generateCode() {
         ArrayList<String> asm = new ArrayList<>();
-        asm.add("\ticonst_" + (boolValue ? "1" : "0"));
+        asm.add("\taconst_null");
         return asm;
     }
 }
