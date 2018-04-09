@@ -34,16 +34,20 @@ public class ParamList extends EmptyComponent {
     }
 
     public class ParamListItem {
-        private String label;
+        private String name;
         private String type;
 
-        public ParamListItem(String label, String type) {
-            this.label = label;
+        public ParamListItem(String name, String type) {
+            this.name = name;
             this.type = type;
         }
 
         public String getType() {
             return type;
+        }
+
+        public String getName() {
+            return name;
         }
     }
 }

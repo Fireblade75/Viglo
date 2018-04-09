@@ -4,6 +4,7 @@ import nl.saxion.viglo.Scope;
 import nl.saxion.viglo.component.BlockComponent;
 import nl.saxion.viglo.component.ParamList;
 import nl.saxion.viglo.component.VigloComponent;
+import nl.saxion.viglo.type.Value;
 
 import java.util.ArrayList;
 
@@ -14,11 +15,14 @@ public class FunctionExpression implements VigloComponent {
     private String returnType;
     private Scope scope;
 
-    public FunctionExpression(ParamList paramList, BlockComponent block, String returnType, Scope scope) {
+    public FunctionExpression(ParamList paramList, String returnType, Scope scope) {
         this.paramList = paramList;
-        this.block = block;
         this.returnType = returnType;
         this.scope = scope;
+
+        for(ParamList.ParamListItem param : paramList.items()) {
+            scope.addValue(param.getName(), new Value(param.getType(), false));
+        }
     }
 
     @Override
@@ -40,5 +44,9 @@ public class FunctionExpression implements VigloComponent {
 
     public String getReturnType() {
         return returnType;
+    }
+
+    public void setBlock(BlockComponent block) {
+        this.block = block;
     }
 }

@@ -1,7 +1,9 @@
 package nl.saxion.viglo.component;
 
+import nl.saxion.viglo.Scope;
 import nl.saxion.viglo.component.expr.FunctionExpression;
 import nl.saxion.viglo.type.TypeConverter;
+import nl.saxion.viglo.type.Value;
 
 import java.util.ArrayList;
 
@@ -11,7 +13,7 @@ public class FunctionComponent implements VigloComponent {
     private String name;
     private boolean constructor = false;
 
-    public FunctionComponent(String name, FunctionExpression function) {
+    public FunctionComponent(String name, FunctionExpression function, Scope scope) {
         this.name = name;
         this.function = function;
     }

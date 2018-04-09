@@ -3,6 +3,7 @@ package nl.saxion.viglo;
 
 import nl.saxion.viglo.component.*;
 import nl.saxion.viglo.component.expr.*;
+import nl.saxion.viglo.type.ClassHeader;
 import nl.saxion.viglo.type.Value;
 
 import java.util.ArrayList;
@@ -12,6 +13,11 @@ public class VigloCodeVisitor extends VigloBaseVisitor<VigloComponent> {
     private ImportContext importContext = new ImportContext();
     private Scope scope;
     private String className;
+    private ClassHeader classHeader;
+
+    public void setClassHeader(ClassHeader classHeader) {
+        this.classHeader = classHeader;
+    }
 
     @Override
     public VigloComponent visitProgram(VigloParser.ProgramContext ctx) {
@@ -45,7 +51,7 @@ public class VigloCodeVisitor extends VigloBaseVisitor<VigloComponent> {
 
     @Override
     public VigloComponent visitStructBlock(VigloParser.StructBlockContext ctx) {
-        scope = new Scope(className);
+        scope = new Scope(className, classHeader);
         className = ctx.NAME().getText();
         BlockComponent blockComponent = visitBlock(ctx.block());
         return new StructComponent(className, blockComponent);
@@ -56,9 +62,9 @@ public class VigloCodeVisitor extends VigloBaseVisitor<VigloComponent> {
      */
     @Override
     public RootBlockComponent visitRootBlock(VigloParser.RootBlockContext ctx) {
-        scope = new Scope(className);
+        scope = new Scope(className, classHeader);
         RootBlockComponent blockComponent = new RootBlockComponent(scope, className);
-        for(VigloParser.StatementContext statement : ctx.block().statement()) {
+        for(VigloParser.RootStatementContext statement : ctx.rootStatement()) {
             blockComponent.add(visit(statement));
         }
         scope.close();
@@ -70,15 +76,15 @@ public class VigloCodeVisitor extends VigloBaseVisitor<VigloComponent> {
     public VigloComponent visitDeclareFunction(VigloParser.DeclareFunctionContext ctx) {
         String name = ctx.NAME().getText();
         FunctionExpression functionExpression = visitFunctionStatement(ctx.functionStatement());
-        return new FunctionComponent(name, functionExpression);
+        return new FunctionComponent(name, functionExpression, scope);
     }
 
     @Override
     public FunctionExpression visitFunctionStatement(VigloParser.FunctionStatementContext ctx) {
         ParamList paramList = visitParamList(ctx.paramList());
-        BlockComponent block = visitBlock(ctx.block());
         String returnType = ctx.type().getText();
-        FunctionExpression functionExpression = new FunctionExpression(paramList, block, returnType, scope);
+        FunctionExpression functionExpression = new FunctionExpression(paramList, returnType, scope);
+        functionExpression.setBlock(visitBlock(ctx.block()));
         return functionExpression;
     }
 
@@ -100,19 +106,22 @@ public class VigloCodeVisitor extends VigloBaseVisitor<VigloComponent> {
     }
 
     @Override
-    public VigloComponent visitDeclareStatement(VigloParser.DeclareStatementContext ctx) {
+    public VigloComponent visitDeclareInferStatement(VigloParser.DeclareInferStatementContext ctx) {
         String label = ctx.NAME().getText();
         boolean constant = ctx.varKey.getText().equals("const");
-        if(ctx.type()!=null) {
-            Value value = new Value(ctx.type().getText(), constant);
-            scope.addValue(label, value);
-            return new EmptyComponent();
-        } else {
-            ExprComponent expr = (ExprComponent) visit(ctx.exp());
-            Value value = expr.getValue();
-            scope.addValue(label, value);
-            return new AssignStatement(expr, scope, scope.getIndex(label));
-        }
+        ExprComponent expr = (ExprComponent) visit(ctx.exp());
+        Value value = expr.getValue();
+        scope.addValue(label, value);
+        return new AssignStatement(expr, scope, scope.getIndex(label));
+    }
+
+    @Override
+    public VigloComponent visitDeclareOnlyStatement(VigloParser.DeclareOnlyStatementContext ctx) {
+        String label = ctx.NAME().getText();
+        boolean constant = ctx.varKey.getText().equals("const");
+        Value value = new Value(ctx.type().getText(), constant);
+        scope.addValue(label, value);
+        return new EmptyComponent();
     }
 
     @Override
@@ -125,7 +134,7 @@ public class VigloCodeVisitor extends VigloBaseVisitor<VigloComponent> {
     }
 
     @Override
-    public VigloComponent visitVariable(VigloParser.VariableContext ctx) {
+    public VariableComponent visitVariable(VigloParser.VariableContext ctx) {
         String label = ctx.NAME().getText();
         return new VariableComponent(scope.getValue(label), scope, scope.getIndex(label));
     }
@@ -173,6 +182,13 @@ public class VigloCodeVisitor extends VigloBaseVisitor<VigloComponent> {
         ExprComponent rightExpr = (ExprComponent) visit(ctx.right);
         String op = ctx.math_operator().getText();
         return new MathExpression(leftExpr, rightExpr, op, scope);
+    }
+
+    @Override
+    public VigloComponent visitEqualityExpression(VigloParser.EqualityExpressionContext ctx) {
+        ExprComponent leftExpr = (ExprComponent) visit(ctx.left);
+        ExprComponent rightExpr = (ExprComponent) visit(ctx.right);
+        return new EqualsExpression(leftExpr, rightExpr, scope);
     }
 
     @Override

@@ -20,8 +20,6 @@ public class RootBlockComponent extends BlockComponent {
                 if(!function.hasParams()) {
                     simpleConstructor = true;
                 }
-            } else {
-                getScope().addFunction(function);
             }
         }
     }

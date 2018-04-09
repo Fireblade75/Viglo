@@ -10,8 +10,10 @@ structBlock: STRUCT NAME (':' functionCall (',' functionCall)*)? paramList block
 classBlock: CLASS NAME classList? rootBlock;
 classList: ':' NAME (',' NAME)*;
 
-rootBlock: block;
+rootBlock: '{' rootStatement* '}';
 block: '{' statement* '}';
+
+rootStatement: declareOnlyStatement | declareFunction;
 
 statement: declareStatement
     | assignStatement
@@ -61,7 +63,10 @@ paramList: '(' (paramItem (',' paramItem)*)? ')';
 paramItem: NAME ':' type;
 
 
-declareStatement: varKey=(CONST | LET) NAME (('=' exp) | (':' type));
+declareStatement: declareInferStatement | declareOnlyStatement;
+declareInferStatement: varKey=(CONST | LET) NAME ('=' exp);
+declareOnlyStatement: varKey=(CONST | LET) NAME (':' type);
+
 assignStatement: variable '=' exp;
 returnStatement: RETURN exp;
 echoStatement: ECHO exp;
@@ -139,7 +144,7 @@ NAME: [a-zA-Z_$][a-zA-Z0-9_$]*;
 CHAR_STRING: '\'' CHAR_CHAR '\'';
 CHAR_CHAR: ~('\\') | '\\\\' | '\\\'';
 STRING_STRING: '"' (STRING_CHAR*) '"';
-STRING_CHAR: ~('\\') | '\\\\' | '\\"';
+STRING_CHAR: ~('\\'|'"') | '\\\\' | '\\"';
 
 IMPORT_LITERAL: '\'' [a-zA-Z0-9._]+ '\'';
 

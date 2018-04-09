@@ -12,6 +12,13 @@ public class FunctionDescriptor {
     private String returnType;
     private ArrayList<String> paramTypes = new ArrayList<>();
 
+    public FunctionDescriptor(String name, String className, ArrayList<String> paramTypes, String returnType) {
+        this.name = name;
+        this.className = className;
+        this.paramTypes = paramTypes;
+        this.returnType = returnType;
+    }
+
     public FunctionDescriptor(FunctionComponent function, String className) {
         this.returnType = function.getReturnType();
         this.name = function.getName();
@@ -36,5 +43,9 @@ public class FunctionDescriptor {
 
     public String getReturnType() {
         return returnType;
+    }
+
+    public String getName() {
+        return name;
     }
 }

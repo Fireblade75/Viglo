@@ -24,14 +24,18 @@ public class Main {
         // Create parser and feed it the tokens
         VigloParser parser = new VigloParser(tokens);
         ParseTree program = parser.program();
+        VigloMethodVisitor checker = new VigloMethodVisitor();
         VigloCodeVisitor visitor = new VigloCodeVisitor();
-        ArrayList<String> prog  = visitor.visit(program).generateCode();
-        // Output fixed part of the Jasmin file (except for the name)
-        //System.out.println(startProg.replaceAll("\\{\\{name\\}\\}",name));
-        // Output compiled part of the jasmin file
-        System.out.println(prog.stream().collect(Collectors.joining("\n")));
-        // Output footer of jasmin file
-        //System.out.println(endProg);
+
+        try {
+            checker.visit(program);
+            visitor.setClassHeader(checker.getClassHeader());
+            ArrayList<String> prog = visitor.visit(program).generateCode();
+
+            System.out.println(prog.stream().collect(Collectors.joining("\n")));
+        } catch (CompilerException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
     }
 
     private String readCode() {
