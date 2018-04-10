@@ -2,6 +2,7 @@ package nl.saxion.viglo;
 
 
 import nl.saxion.viglo.component.*;
+import nl.saxion.viglo.component.branching.IfComponent;
 import nl.saxion.viglo.component.expr.*;
 import nl.saxion.viglo.type.ClassHeader;
 import nl.saxion.viglo.type.Value;
@@ -12,6 +13,7 @@ public class VigloCodeVisitor extends VigloBaseVisitor<VigloComponent> {
 
     private ImportContext importContext = new ImportContext();
     private Scope scope;
+    private GlobalScope globalScope;
     private String className;
     private ClassHeader classHeader;
 
@@ -44,15 +46,15 @@ public class VigloCodeVisitor extends VigloBaseVisitor<VigloComponent> {
 
     @Override
     public VigloComponent visitClassBlock(VigloParser.ClassBlockContext ctx) {
-        className = ctx.NAME().getText();
+        className = "viglo/" + ctx.NAME().getText();
         RootBlockComponent block = visitRootBlock(ctx.rootBlock());
         return new ClassComponent(className, block);
     }
 
     @Override
     public VigloComponent visitStructBlock(VigloParser.StructBlockContext ctx) {
-        scope = new Scope(className, classHeader);
-        className = ctx.NAME().getText();
+        globalScope = new GlobalScope(className, classHeader);
+        className = "viglo/" +ctx.NAME().getText();
         BlockComponent blockComponent = visitBlock(ctx.block());
         return new StructComponent(className, blockComponent);
     }
@@ -62,21 +64,22 @@ public class VigloCodeVisitor extends VigloBaseVisitor<VigloComponent> {
      */
     @Override
     public RootBlockComponent visitRootBlock(VigloParser.RootBlockContext ctx) {
-        scope = new Scope(className, classHeader);
+        globalScope = new GlobalScope(className, classHeader);
         RootBlockComponent blockComponent = new RootBlockComponent(scope, className);
         for(VigloParser.RootStatementContext statement : ctx.rootStatement()) {
             blockComponent.add(visit(statement));
         }
-        scope.close();
-        scope = scope.getParent();
         return blockComponent;
     }
 
     @Override
     public VigloComponent visitDeclareFunction(VigloParser.DeclareFunctionContext ctx) {
         String name = ctx.NAME().getText();
+        scope = new Scope(globalScope);
         FunctionExpression functionExpression = visitFunctionStatement(ctx.functionStatement());
-        return new FunctionComponent(name, functionExpression, scope);
+        FunctionComponent functionComponent = new FunctionComponent(name, functionExpression, scope);
+        scope.close();
+        return functionComponent;
     }
 
     @Override
@@ -189,6 +192,32 @@ public class VigloCodeVisitor extends VigloBaseVisitor<VigloComponent> {
         ExprComponent leftExpr = (ExprComponent) visit(ctx.left);
         ExprComponent rightExpr = (ExprComponent) visit(ctx.right);
         return new EqualsExpression(leftExpr, rightExpr, scope);
+    }
+
+    @Override
+    public VigloComponent visitIfStatement(VigloParser.IfStatementContext ctx) {
+        ExprComponent ifExpr = (ExprComponent) visit(ctx.exp());
+        BlockComponent ifBlock = visitBlock(ctx.block());
+        IfComponent ifComponent = new IfComponent(ifExpr, ifBlock, scope);
+        if(ctx.elseStatement() != null) {
+            ifComponent.addElseBlock(visitElseStatement(ctx.elseStatement()));
+        }
+        for(VigloParser.ElseifStatementContext elseIfBlock : ctx.elseifStatement()) {
+            ifComponent.addElseIfBlock(visitElseifStatement(elseIfBlock));
+        }
+        return ifComponent;
+    }
+
+    @Override
+    public BlockComponent visitElseStatement(VigloParser.ElseStatementContext ctx) {
+        return visitBlock(ctx.block());
+    }
+
+    @Override
+    public IfComponent.ElseIfBlock visitElseifStatement(VigloParser.ElseifStatementContext ctx) {
+        BlockComponent block = visitBlock(ctx.block());
+        ExprComponent expr  = (ExprComponent) visit(ctx.exp());
+        return new IfComponent.ElseIfBlock(expr, block);
     }
 
     @Override

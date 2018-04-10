@@ -7,7 +7,7 @@ importStatement: IMPORT IMPORT_LITERAL;
 
 
 structBlock: STRUCT NAME (':' functionCall (',' functionCall)*)? paramList block;
-classBlock: CLASS NAME classList? rootBlock;
+classBlock: CLASS NAME ('<' generic=type '>')? classList? rootBlock;
 classList: ':' NAME (',' NAME)*;
 
 rootBlock: '{' rootStatement* '}';
@@ -93,6 +93,10 @@ variable: NAME ;
 
 WS: [\r\n\t ]+ -> skip;
 
+COMMENT: ( '~' ~[\r\n]* '\r'? '\n'
+         | '<~' .*? '~>'
+         ) -> channel(HIDDEN);
+
 INT_LITERAL: [1-9][0-9]* | '0';
 FLOAT_LITERAL: [0-9]+'.'[0-9]+'f';
 DOUBLE_LITERAL: [0-9]+'.'[0-9]+;
@@ -147,12 +151,4 @@ STRING_STRING: '"' (STRING_CHAR*) '"';
 STRING_CHAR: ~('\\'|'"') | '\\\\' | '\\"';
 
 IMPORT_LITERAL: '\'' [a-zA-Z0-9._]+ '\'';
-
-COMMENT
-    :   ' ~>' .*? '<~' -> channel(HIDDEN)
-    ;
-
-LINE_COMMENT
-    :   '~' ~[\r\n]* -> channel(HIDDEN)
-    ;
 

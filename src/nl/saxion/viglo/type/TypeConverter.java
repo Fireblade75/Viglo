@@ -14,6 +14,8 @@ public class TypeConverter {
                 return "F";
             case "double":
                 return "D";
+            case "bool":
+                return "I";
             default:
                 return type;
         }

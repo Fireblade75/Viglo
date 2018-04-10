@@ -24,14 +24,23 @@ public class NotExprComponent extends ExprComponent {
     @Override
     public ArrayList<String> generateCode() {
         ArrayList<String> asm = new ArrayList<>(childExpr.generateCode());
-        String trueLabel = scope.getLabel();
+        String endLabel = scope.getLabel();
         String falseLabel = scope.getLabel();
         asm.add("\tifne " + falseLabel);
         asm.add("\ticonst_1");
-        asm.add("\tgoto " + trueLabel);
+        asm.add("\tgoto " + endLabel);
         asm.add(falseLabel + ":");
         asm.add("\ticonst_0");
-        asm.add(trueLabel + ":");
+        asm.add(endLabel + ":");
         return asm;
     }
 }
+
+/*
+    ifne #_false
+    iconst_1
+    goto #_end
+    #_false
+    iconst_0
+    #_end
+ */
