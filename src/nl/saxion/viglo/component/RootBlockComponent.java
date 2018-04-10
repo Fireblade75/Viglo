@@ -15,13 +15,18 @@ public class RootBlockComponent extends BlockComponent {
         super.add(component);
         if(component instanceof FunctionComponent) {
             FunctionComponent function = (FunctionComponent) component;
-            if(function.getName().equals(className)) {
+            if(function.getName().equals(getSimpleClassName(className))) {
                 function.setConstructor();
                 if(!function.hasParams()) {
                     simpleConstructor = true;
                 }
             }
         }
+    }
+
+    public String getSimpleClassName(String className) {
+        String[] path = className.split("/");
+        return path[path.length -1];
     }
 
     public boolean hasSimpleConstructor() {
