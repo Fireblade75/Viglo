@@ -4,8 +4,6 @@ program: importStatement* (structBlock | classBlock);
 
 importStatement: IMPORT IMPORT_LITERAL;
 
-
-
 structBlock: STRUCT NAME (':' functionCall (',' functionCall)*)? paramList block;
 classBlock: CLASS NAME ('<' generic=type '>')? classList? rootBlock;
 classList: ':' NAME (',' NAME)*;
@@ -21,6 +19,7 @@ statement: declareStatement
     | declareFunction
     | ifStatement
     | forStatement
+    | whileStatement
     | chainExp
     | echoStatement
     ;
@@ -70,6 +69,7 @@ declareOnlyStatement: varKey=(CONST | LET) NAME (':' type);
 assignStatement: variable '=' exp;
 returnStatement: RETURN exp;
 echoStatement: ECHO exp;
+whileStatement: WHILE exp DO block;
 
 arrayCreate: ARRAY '<' type '>' '(' (exp (',' exp)*)? ')';
 listCreate: LIST '<' type '>' '(' (exp (',' exp)*)? ')';
@@ -138,6 +138,8 @@ STRUCT: 'struct';
 CLASS: 'class';
 FUNC: 'func';
 IMPORT: 'import';
+WHILE: 'while';
+DO: 'do';
 
 IF_MARK: '?';
 FOR: 'for';
