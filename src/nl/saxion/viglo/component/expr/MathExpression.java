@@ -59,7 +59,7 @@ public class MathExpression extends ExprComponent {
         if(type == MathExpressionType.PLUS) {
             opperator += "add";
         } else if(type == MathExpressionType.MINUS) {
-            opperator += " sub";
+            opperator += "sub";
         } else if(type == MathExpressionType.MULTIPLY) {
             opperator += "mul";
         } else if(type == MathExpressionType.DIVIDE) {

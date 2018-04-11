@@ -16,6 +16,8 @@ public class TypeConverter {
                 return "D";
             case "bool":
                 return "I";
+            case "char":
+                return "I";
             default:
                 return type;
         }

@@ -38,7 +38,7 @@ public class FunctionDescriptor {
     }
 
     public String getJasminCall() {
-        return className + "/" + name + "(" + getParamString() + ")" + TypeConverter.rawToJasmin(returnType);
+        return "viglo/" + className + "/" + name + "(" + getParamString() + ")" + TypeConverter.rawToJasmin(returnType);
     }
 
     public String getReturnType() {
