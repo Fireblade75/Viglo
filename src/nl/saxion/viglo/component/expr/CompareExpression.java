@@ -46,6 +46,12 @@ public class CompareExpression extends ExprComponent {
         String endLabel = scope.getLabel("comp_end");
         if (commonType.equals("int")) {
             asm.add(compareInt(falseLabel));
+        } else if (commonType.equals("long")) {
+            asm.addAll(compareLong(falseLabel));
+        } else if (commonType.equals("float")) {
+            asm.addAll(compareFloat(falseLabel));
+        } else if (commonType.equals("double")) {
+            asm.addAll(compareDouble(falseLabel));
         }
         asm.add("\ticonst_1");
         asm.add("\tgoto " + endLabel);
@@ -69,5 +75,73 @@ public class CompareExpression extends ExprComponent {
             default:
                 throw new UnsupportedOperationException();
         }
+    }
+
+    private ArrayList<String> compareLong(String falseLabel) {
+        ArrayList<String> asm = new ArrayList<>();
+        asm.add("\tlcmp");
+        switch (type) {
+            case LESS:
+               asm.add("\tifge " + falseLabel);
+                break;
+            case LESS_OR_EQUAL:
+                asm.add("\tifgt " + falseLabel);
+                break;
+            case GREATER:
+                asm.add("\tifle " + falseLabel);
+                break;
+            case GREATER_OR_EQUAL:
+                asm.add("\tiflt " + falseLabel);
+                break;
+        }
+        return asm;
+    }
+
+    private ArrayList<String> compareFloat(String falseLabel) {
+        ArrayList<String> asm = new ArrayList<>();
+
+        switch (type) {
+            case LESS:
+                asm.add("\tfcmpg");
+                asm.add("\tifge " + falseLabel);
+                break;
+            case LESS_OR_EQUAL:
+                asm.add("\tfcmpg");
+                asm.add("\tifgt " + falseLabel);
+                break;
+            case GREATER:
+                asm.add("\tfcmpl");
+                asm.add("\tifle " + falseLabel);
+                break;
+            case GREATER_OR_EQUAL:
+                asm.add("\tfcmpl");
+                asm.add("\tiflt " + falseLabel);
+                break;
+        }
+        return asm;
+    }
+
+    private ArrayList<String> compareDouble(String falseLabel) {
+        ArrayList<String> asm = new ArrayList<>();
+
+        switch (type) {
+            case LESS:
+                asm.add("\tdcmpg");
+                asm.add("\tifge " + falseLabel);
+                break;
+            case LESS_OR_EQUAL:
+                asm.add("\tdcmpg");
+                asm.add("\tifgt " + falseLabel);
+                break;
+            case GREATER:
+                asm.add("\tdcmpl");
+                asm.add("\tifle " + falseLabel);
+                break;
+            case GREATER_OR_EQUAL:
+                asm.add("\tdcmpl");
+                asm.add("\tiflt " + falseLabel);
+                break;
+        }
+        return asm;
     }
 }
