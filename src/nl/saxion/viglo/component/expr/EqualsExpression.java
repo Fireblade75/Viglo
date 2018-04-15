@@ -10,12 +10,14 @@ public class EqualsExpression extends ExprComponent {
 
     private ExprComponent leftExpr, rightExpr;
     private Scope scope;
+    private boolean inverted;
 
-    public EqualsExpression(ExprComponent leftExpr, ExprComponent rightExpr, Scope scope) {
+    public EqualsExpression(ExprComponent leftExpr, ExprComponent rightExpr, boolean inverted, Scope scope) {
         super(new Value("bool", false));
         this.leftExpr = leftExpr;
         this.rightExpr = rightExpr;
         this.scope = scope;
+        this.inverted = inverted;
     }
 
 
@@ -53,10 +55,11 @@ public class EqualsExpression extends ExprComponent {
                 asm.add("\tdcmpl");
                 asm.add("\tifne " + falseLabel);
             }
-            asm.add("\ticonst_1");
+
+            asm.add(inverted ? "\ticonst_0" : "\ticonst_1");
             asm.add("\tgoto " + endLabel);
             asm.add(falseLabel + ":");
-            asm.add("\ticonst_0");
+            asm.add(inverted ? "\ticonst_1" : "\ticonst_0");
             asm.add(endLabel + ":");
         } else {
             asm.add("\tpop");

@@ -3,6 +3,7 @@ package nl.saxion.viglo;
 
 import nl.saxion.viglo.component.*;
 import nl.saxion.viglo.component.branching.IfComponent;
+import nl.saxion.viglo.component.branching.WhileComponent;
 import nl.saxion.viglo.component.expr.*;
 import nl.saxion.viglo.type.ClassHeader;
 import nl.saxion.viglo.type.Value;
@@ -191,11 +192,20 @@ public class VigloCodeVisitor extends VigloBaseVisitor<VigloComponent> {
     public VigloComponent visitEqualityExpression(VigloParser.EqualityExpressionContext ctx) {
         ExprComponent leftExpr = (ExprComponent) visit(ctx.left);
         ExprComponent rightExpr = (ExprComponent) visit(ctx.right);
-        return new EqualsExpression(leftExpr, rightExpr, scope);
+        boolean inverted = ctx.eq_operator().getText().equals("!=");
+        return new EqualsExpression(leftExpr, rightExpr, inverted, scope);
     }
 
     @Override
-    public VigloComponent visitIfStatement(VigloParser.IfStatementContext ctx) {
+    public VigloComponent visitCompareExpression(VigloParser.CompareExpressionContext ctx) {
+        ExprComponent leftExpr = (ExprComponent) visit(ctx.left);
+        ExprComponent rightExpr = (ExprComponent) visit(ctx.right);
+        String op = ctx.comp_operator().getText();
+        return new CompareExpression(leftExpr, rightExpr, op, scope);
+    }
+
+    @Override
+    public IfComponent visitIfStatement(VigloParser.IfStatementContext ctx) {
         ExprComponent ifExpr = (ExprComponent) visit(ctx.exp());
         BlockComponent ifBlock = visitBlock(ctx.block());
         IfComponent ifComponent = new IfComponent(ifExpr, ifBlock, scope);
@@ -206,6 +216,13 @@ public class VigloCodeVisitor extends VigloBaseVisitor<VigloComponent> {
             ifComponent.addElseIfBlock(visitElseifStatement(elseIfBlock));
         }
         return ifComponent;
+    }
+
+    @Override
+    public WhileComponent visitWhileStatement(VigloParser.WhileStatementContext ctx) {
+        ExprComponent exprComponent = (ExprComponent) visit(ctx.exp());
+        BlockComponent blockComponent = visitBlock(ctx.block());
+        return new WhileComponent(exprComponent, blockComponent, scope);
     }
 
     @Override

@@ -35,6 +35,7 @@ exp: NULL                                   #NullExpression
     | chainExp                              #ChainExpression
     | left=exp math_operator right=exp      #MathExpression
     | left=exp eq_operator right=exp        #EqualityExpression
+    | left=exp comp_operator right=exp      #CompareExpression
     | OP_NOT exp                            #NotExpression
     | left=exp logic_operator right=exp     #LogicExpression
     | arrayCreate                           #ArrayExpression
@@ -80,7 +81,8 @@ numberLiteral: intLiteral | floatLiteral | longLiteral | doubleLiteral;
 type: NAME | INT | FLOAT | LONG | DOUBLE | BOOL | NUMBER;
 
 math_operator: PLUS | MINUS | MULTIPLY | DEVIDE;
-eq_operator: OP_LESS | OP_LESSEQ | OP_EQ | OP_MORE | OP_MOREEQ;
+eq_operator: OP_EQ | OP_NOT_EQ;
+comp_operator: OP_LESS | OP_LESSEQ | OP_MORE | OP_MOREEQ;
 logic_operator: OP_AND | OP_OR;
 
 rangeLiteral: '[' INT_LITERAL '...' INT_LITERAL ']';
@@ -123,6 +125,7 @@ DEVIDE: '/';
 OP_LESS: '<';
 OP_MORE: '>';
 OP_EQ: '==';
+OP_NOT_EQ: '!=';
 OP_LESSEQ: '<=';
 OP_MOREEQ: '>=';
 
