@@ -10,9 +10,9 @@ public class CompilerException extends RuntimeException {
 
     private static String buildMessage( ParserRuleContext ctx, String msg ) {
         Token firstToken = ctx.getStart();
-        //int line = firstToken.getLine();
-        int pos = firstToken.getStartIndex();
+        int pos = firstToken.getCharPositionInLine();
+        int line = firstToken.getLine();
 
-        return String.format("pos %d: %s", pos, msg);
+        return String.format("Line %d:%d => %s", line, pos, msg);
     }
 }

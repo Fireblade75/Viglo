@@ -49,7 +49,7 @@ public class VigloCodeVisitor extends VigloBaseVisitor<VigloComponent> {
     public VigloComponent visitClassBlock(VigloParser.ClassBlockContext ctx) {
         className = "viglo/" + ctx.NAME().getText();
         RootBlockComponent block = visitRootBlock(ctx.rootBlock());
-        return new ClassComponent(className, block);
+        return new ClassComponent(className, block, classHeader);
     }
 
     @Override
@@ -68,7 +68,9 @@ public class VigloCodeVisitor extends VigloBaseVisitor<VigloComponent> {
         globalScope = new GlobalScope(className, classHeader);
         RootBlockComponent blockComponent = new RootBlockComponent(scope, className);
         for(VigloParser.RootStatementContext statement : ctx.rootStatement()) {
-            blockComponent.add(visit(statement));
+            if(statement.declareFunction() != null) {
+                blockComponent.add(visit(statement));
+            }
         }
         return blockComponent;
     }
@@ -116,7 +118,7 @@ public class VigloCodeVisitor extends VigloBaseVisitor<VigloComponent> {
         ExprComponent expr = (ExprComponent) visit(ctx.exp());
         Value value = expr.getValue();
         scope.addValue(label, value);
-        return new AssignStatement(expr, scope, scope.getIndex(label));
+        return new AssignStatement(expr, scope, label);
     }
 
     @Override
@@ -157,7 +159,7 @@ public class VigloCodeVisitor extends VigloBaseVisitor<VigloComponent> {
     public VigloComponent visitAssignStatement(VigloParser.AssignStatementContext ctx) {
         ExprComponent expr = (ExprComponent) visit(ctx.exp());
         String label = ctx.variable().getText();
-        return new AssignStatement(expr, scope, scope.getIndex(label));
+        return new AssignStatement(expr, scope, label);
     }
 
     @Override

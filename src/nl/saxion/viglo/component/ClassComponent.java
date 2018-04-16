@@ -1,28 +1,42 @@
 package nl.saxion.viglo.component;
 
+import nl.saxion.viglo.type.ClassHeader;
+import nl.saxion.viglo.type.TypeConverter;
+
 import java.util.ArrayList;
+import java.util.Map;
 
 public class ClassComponent extends BaseClassComponent {
     private String className;
     private RootBlockComponent block;
+    private ClassHeader classHeader;
 
-    public ClassComponent(String className, RootBlockComponent block) {
+    public ClassComponent(String className, RootBlockComponent block, ClassHeader classHeader) {
         this.className = className;
         this.block = block;
+        this.classHeader = classHeader;
     }
 
     @Override
     public ArrayList<String> generateCode() {
-        ArrayList<String> code = new ArrayList<>();
-        code.add(".class public "+className);
-        code.add(".super java/lang/Object\n");
-        code.addAll(block.generateCode());
-        if(!block.hasSimpleConstructor()) {
-            code.addAll(getDefaultConstructor());
+        ArrayList<String> asm = new ArrayList<>();
+        asm.add(".class public "+className);
+        asm.add(".super java/lang/Object\n");
+        if(classHeader.countFields() > 0) {
+            for (Map.Entry<String, String> field : classHeader.getFields().entrySet()) {
+                String type = TypeConverter.rawToJasmin(field.getValue());
+                asm.add(".field public " + field.getKey() + " " + type);
+            }
+            asm.add("");
         }
-        code.addAll(getDefaultMain(className));
 
-        return code;
+        asm.addAll(block.generateCode());
+        if(!block.hasSimpleConstructor()) {
+            asm.addAll(getDefaultConstructor());
+        }
+        asm.addAll(getDefaultMain(className));
+
+        return asm;
     }
 
     private ArrayList<String> getDefaultConstructor() {

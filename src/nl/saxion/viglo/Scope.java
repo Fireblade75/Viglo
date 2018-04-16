@@ -1,6 +1,7 @@
 package nl.saxion.viglo;
 
 import nl.saxion.viglo.type.ClassHeader;
+import nl.saxion.viglo.type.FieldValue;
 import nl.saxion.viglo.type.Value;
 
 import java.util.ArrayList;
@@ -25,8 +26,12 @@ public class Scope {
     }
 
     public void addValue(String label, Value value) {
-        valueMap.put(label, value);
-        labelList.add(label);
+        if(!hasValueDirect(label)) {
+            valueMap.put(label, value);
+            labelList.add(label);
+        } else {
+            throw new RuntimeException("Cannot add '"+label+"' to this scope, variable already defined");
+        }
     }
 
     public Value getValue(String label) {
@@ -35,8 +40,23 @@ public class Scope {
         } else if (parent != null) {
             return parent.getValue(label);
         } else {
+            String fieldType = getClassHeader().getField(label);
+            if(fieldType != null) {
+                String className = getClassHeader().getClassName();
+                return new FieldValue(label, fieldType, className);
+            }
             return null;
         }
+    }
+
+    /**
+     * Checks whether the label is already defined in this scope
+     * If true the variable can not be added
+     * @param label the label of the variable
+     * @return true if the variable already exists
+     */
+    public boolean hasValueDirect(String label) {
+        return valueMap.containsKey(label);
     }
 
     public int getIndex(String label) {
@@ -106,5 +126,9 @@ public class Scope {
 
     public FunctionDescriptor getFunction(String name) {
         return getClassHeader().getFunction(name);
+    }
+
+    public boolean isField(String label) {
+        return getClassHeader().getField(label) != null;
     }
 }

@@ -1,6 +1,7 @@
 package nl.saxion.viglo;
 
 
+import nl.saxion.viglo.type.ClassHeader;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -24,12 +25,17 @@ public class Main {
         // Create parser and feed it the tokens
         VigloParser parser = new VigloParser(tokens);
         ParseTree program = parser.program();
-        VigloMethodVisitor checker = new VigloMethodVisitor();
+        VigloMethodVisitor headerBuilder = new VigloMethodVisitor();
+        VigloTypeVisitor typeChecker = new VigloTypeVisitor();
         VigloCodeVisitor visitor = new VigloCodeVisitor();
 
         try {
-            checker.visit(program);
-            visitor.setClassHeader(checker.getClassHeader());
+            headerBuilder.visit(program);
+            ClassHeader classHeader = headerBuilder.getClassHeader();
+
+            typeChecker.setClassHeader(classHeader);
+            visitor.setClassHeader(classHeader);
+            typeChecker.visit(program);
             ArrayList<String> prog = visitor.visit(program).generateCode();
 
             System.out.println(prog.stream().collect(Collectors.joining("\n")));

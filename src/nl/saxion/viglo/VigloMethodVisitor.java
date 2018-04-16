@@ -53,6 +53,14 @@ public class VigloMethodVisitor extends VigloBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitDeclareOnlyStatement(VigloParser.DeclareOnlyStatementContext ctx) {
+        String name = ctx.NAME().getText();
+        String type = ctx.type().getText();
+        classHeader.addField(name, type);
+        return null;
+    }
+
+    @Override
     public ArrayList<String> visitParamList(VigloParser.ParamListContext ctx) {
         ArrayList<String> types = new ArrayList<>();
         for(VigloParser.ParamItemContext item : ctx.paramItem()) {
