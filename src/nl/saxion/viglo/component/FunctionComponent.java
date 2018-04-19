@@ -24,7 +24,7 @@ public class FunctionComponent implements VigloComponent {
         ArrayList<String> asm = new ArrayList<>();
         BlockComponent blockComponent = function.getBlock();
 
-        int locals = function.getScope().getLocals() + 1;
+        int locals = function.getScope().getLocals();
         String returnType = TypeConverter.rawToJasmin(function.getReturnType());
         String paramTypes = function.getParamList().asJasminList();
         String functionName = constructor ? "<init>" : name;

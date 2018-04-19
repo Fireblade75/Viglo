@@ -6,6 +6,7 @@ import nl.saxion.viglo.type.Value;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Scope {
 
@@ -15,6 +16,7 @@ public class Scope {
     private ArrayList<String> labelList = new ArrayList<>();
     private int childLocals = 0;
     private int labelCounter = 0;
+    private ArrayList<Scope> children = new ArrayList<>();
 
     public Scope(GlobalScope globalScope) {
         this.globalScope = globalScope;
@@ -22,6 +24,7 @@ public class Scope {
 
     public Scope(Scope scope) {
         parent = scope;
+        parent.addChild(this);
         labelList.addAll(scope.labelList);
     }
 
@@ -29,6 +32,9 @@ public class Scope {
         if(!hasValueDirect(label)) {
             valueMap.put(label, value);
             labelList.add(label);
+            if(value.getStackSize() == 2) {
+                labelList.add("");
+            }
         } else {
             throw new RuntimeException("Cannot add '"+label+"' to this scope, variable already defined");
         }
@@ -75,7 +81,14 @@ public class Scope {
     }
 
     public int getLocals() {
-        return valueMap.size() + childLocals + 1;
+        int locals = parent == null ? 1 : 0;
+        for(Map.Entry<String, Value> erntry : valueMap.entrySet()) {
+            locals += erntry.getValue().getStackSize();
+        }
+        for(Scope child : children) {
+            locals += child.getLocals();
+        }
+        return locals;
     }
 
     public void addChildLocals(int locals) {
@@ -130,5 +143,13 @@ public class Scope {
 
     public boolean isField(String label) {
         return getClassHeader().getField(label) != null;
+    }
+
+    /**
+     * Add a child to this scope
+     * @param scope the scope to add
+     */
+    private void addChild(Scope scope) {
+        children.add(scope);
     }
 }

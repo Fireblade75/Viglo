@@ -1,9 +1,12 @@
 package nl.saxion.viglo;
 
 import nl.saxion.viglo.component.VigloComponent;
+import nl.saxion.viglo.component.expr.NumberConverter;
 import nl.saxion.viglo.type.ClassHeader;
 import nl.saxion.viglo.type.TypeConverter;
 import nl.saxion.viglo.type.Value;
+
+import java.util.ArrayList;
 
 public class VigloTypeVisitor extends VigloBaseVisitor<String> {
 
@@ -61,6 +64,23 @@ public class VigloTypeVisitor extends VigloBaseVisitor<String> {
     }
 
     @Override
+    public String visitFunctionStatement(VigloParser.FunctionStatementContext ctx) {
+        for(VigloParser.ParamItemContext paramItem : ctx.paramList().paramItem()) {
+            visit(paramItem);
+        }
+
+        visit(ctx.block());
+        return "function";
+    }
+
+    @Override
+    public String visitParamItem(VigloParser.ParamItemContext ctx) {
+        Value value = new Value(ctx.type().getText(), false);
+        scope.addValue(ctx.NAME().getText(), value);
+        return ctx.type().getText();
+    }
+
+    @Override
     public String visitBlock(VigloParser.BlockContext ctx) {
         for(VigloParser.StatementContext statment : ctx.statement()) {
             visit(statment);
@@ -87,9 +107,11 @@ public class VigloTypeVisitor extends VigloBaseVisitor<String> {
         String valueType = value.getType(scope);
         String expType = visit(ctx.exp());
         if (!valueType.equals(expType)) {
-            throw new CompilerException(ctx, "Cannot assign " + expType + " to variable '" + label + "' of type " + valueType);
+            if(!TypeConverter.canFreelyCast(expType, valueType)) {
+                throw new CompilerException(ctx, "Cannot assign " + expType + " to variable '" + label + "' of type " + valueType);
+            }
         }
-        return valueType;
+        return expType;
     }
 
     @Override
@@ -157,7 +179,20 @@ public class VigloTypeVisitor extends VigloBaseVisitor<String> {
     @Override
     public String visitFunctionCall(VigloParser.FunctionCallContext ctx) {
         FunctionDescriptor function = scope.getFunction(ctx.NAME().getText());
-        // TODO: check the parameters
+        ArrayList<String> functionParams = function.getParamTypes();
+        if(ctx.exp().size() != functionParams.size()) {
+            throw new CompilerException(ctx, "Parameters don't match " + function.toString());
+        } else {
+            for (int i = 0; i < functionParams.size(); i++) {
+                String callParam = visit(ctx.exp(i));
+                if(!callParam.equals(functionParams.get(i))) {
+                    if(!TypeConverter.canFreelyCast(callParam, functionParams.get(i))) {
+                        String message = "Expected " + functionParams.get(i) + " found " + callParam;
+                        throw new CompilerException(ctx.exp(i), message);
+                    }
+                }
+            }
+        }
         return function.getReturnType();
     }
 

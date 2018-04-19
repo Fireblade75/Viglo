@@ -1,6 +1,7 @@
 package nl.saxion.viglo.component.expr;
 
 import nl.saxion.viglo.Scope;
+import nl.saxion.viglo.type.StdType;
 import nl.saxion.viglo.type.Value;
 
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ public class CompareExpression extends ExprComponent {
     private enum EqualityExpressionType {LESS, LESS_OR_EQUAL, GREATER, GREATER_OR_EQUAL}
 
     public CompareExpression(ExprComponent leftExpr, ExprComponent rightExpr, String symbol, Scope scope) {
-        super(new Value("bool", true));
+        super(new Value(StdType.BOOL, true));
         this.leftExpr = leftExpr;
         this.rightExpr = rightExpr;
         this.scope = scope;

@@ -1,8 +1,10 @@
 package nl.saxion.viglo.component;
 
+import nl.saxion.viglo.CompilerException;
 import nl.saxion.viglo.Scope;
 import nl.saxion.viglo.component.expr.*;
 import nl.saxion.viglo.type.FieldValue;
+import nl.saxion.viglo.type.TypeConverter;
 import nl.saxion.viglo.type.Value;
 
 import java.util.ArrayList;
@@ -13,11 +15,13 @@ public class AssignStatement implements VigloComponent {
     private Scope scope;
     private int localId;
     private FieldValue fieldValue;
+    private String assignType;
 
     public AssignStatement(ExprComponent expr, Scope scope, String label) {
         this.expr = expr;
         this.scope = scope;
         Value value = scope.getValue(label);
+        assignType = value.getRawType(scope);
         if(value instanceof FieldValue) {
             this.fieldValue = (FieldValue) value;
         } else{
@@ -32,11 +36,11 @@ public class AssignStatement implements VigloComponent {
 
         if(fieldValue != null) {
             asm.add("\taload_0");
-            asm.addAll(expr.generateCode());
+            asm.addAll(NumberConverter.loadExpr(expr, expType, assignType));
             asm.add("\tputfield " + fieldValue.getPath());
         } else {
-            asm.addAll(expr.generateCode());
-            switch (expType) {
+            asm.addAll(NumberConverter.loadExpr(expr, expType, assignType));
+            switch (assignType) {
                 case "int":
                     asm.add("\tistore " + localId);
                     break;

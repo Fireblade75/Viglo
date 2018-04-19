@@ -1,5 +1,6 @@
 package nl.saxion.viglo.component.expr;
 
+import nl.saxion.viglo.type.StdType;
 import nl.saxion.viglo.type.Value;
 
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ public class LongLiteral extends ExprComponent {
     long longValue;
 
     public LongLiteral(long longValue) {
-        super(new Value("long", false));
+        super(new Value(StdType.LONG, false));
         this.longValue = longValue;
     }
 

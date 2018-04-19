@@ -33,6 +33,10 @@ public class Value {
         }
     }
 
+    public int getStackSize() {
+        return StdType.getStackSize(type);
+    }
+
     public boolean isConstant(){
         return constant;
     }

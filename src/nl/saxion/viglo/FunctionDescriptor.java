@@ -29,6 +29,11 @@ public class FunctionDescriptor {
         }
     }
 
+    /**
+     * Create a String representing the raw parameters,
+     * this is used to represent the parameters in Jasmin
+     * @return the parameters for the Jasmin file
+     */
     private String getParamString() {
         StringBuilder sb = new StringBuilder();
         for(String param : paramTypes) {
@@ -37,15 +42,47 @@ public class FunctionDescriptor {
         return sb.toString();
     }
 
+    /**
+     * Get the Jasmin name of the function
+     * @return the name of the function ready to be called in a Jasmin source file
+     */
     public String getJasminCall() {
         return "viglo/" + className + "/" + name + "(" + getParamString() + ")" + TypeConverter.rawToJasmin(returnType);
     }
 
+    /**
+     * Get the return type of the function
+     * @return the return type of the function
+     */
     public String getReturnType() {
         return returnType;
     }
 
+    /**
+     * Get the name of the function
+     * @return the name of the function
+     */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Get all parameters as a list of types
+     * @return the list of paramters
+     */
+    public ArrayList<String> getParamTypes() {
+        return paramTypes;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("function (");
+        for (int i = 0; i < paramTypes.size(); i++) {
+            sb.append(paramTypes.get(i));
+            if(i != paramTypes.size() - 1) {
+                sb.append(",");
+            }
+        }
+        return sb.append(")").toString();
     }
 }

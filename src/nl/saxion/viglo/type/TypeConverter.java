@@ -38,4 +38,18 @@ public class TypeConverter {
             return "int";
         }
     }
+
+    public static boolean canFreelyCast(String currentType, String targetType) {
+        if((!isNumber(currentType) || !isNumber(targetType)) || currentType.equals(targetType)) {
+            return false;
+        }
+        if(targetType.equals("double")) {
+            return true;
+        } else if(targetType.equals("float") && !currentType.equals("double")) {
+            return true;
+        } else if(targetType.equals("long") && currentType.equals("int")) {
+            return true;
+        }
+        return false;
+    }
 }

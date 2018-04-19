@@ -1,6 +1,7 @@
 package nl.saxion.viglo.component.expr;
 
 import nl.saxion.viglo.Scope;
+import nl.saxion.viglo.type.StdType;
 import nl.saxion.viglo.type.TypeConverter;
 import nl.saxion.viglo.type.Value;
 
@@ -13,7 +14,7 @@ public class EqualsExpression extends ExprComponent {
     private boolean inverted;
 
     public EqualsExpression(ExprComponent leftExpr, ExprComponent rightExpr, boolean inverted, Scope scope) {
-        super(new Value("bool", false));
+        super(new Value(StdType.BOOL, false));
         this.leftExpr = leftExpr;
         this.rightExpr = rightExpr;
         this.scope = scope;

@@ -1,6 +1,7 @@
 package nl.saxion.viglo.component.expr;
 
 import nl.saxion.viglo.Scope;
+import nl.saxion.viglo.type.StdType;
 import nl.saxion.viglo.type.Value;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ public class NotExprComponent extends ExprComponent {
     private ExprComponent childExpr;
 
     public NotExprComponent(ExprComponent childExpr, Scope scope) {
-        super(new Value("bool", childExpr.isStatic()));
+        super(new Value(StdType.BOOL, childExpr.isStatic()));
         this.childExpr = childExpr;
         this.scope = scope;
     }

@@ -1,5 +1,6 @@
 package nl.saxion.viglo.component.expr;
 
+import nl.saxion.viglo.type.StdType;
 import nl.saxion.viglo.type.Value;
 
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ public class FloatLiteral extends ExprComponent {
     float floatValue;
 
     public FloatLiteral(float floatValue) {
-        super(new Value("float", false));
+        super(new Value(StdType.FLOAT, false));
         this.floatValue = floatValue;
     }
 

@@ -6,7 +6,7 @@ public class FunctionValue extends Value {
     private String functionName;
 
     public FunctionValue(String functionName) {
-        super("function", false);
+        super(StdType.FUNCTION, false);
         this.functionName = functionName;
     }
 
