@@ -43,9 +43,10 @@ public class VigloMethodVisitor extends VigloBaseVisitor<Object> {
     public Object visitDeclareFunction(VigloParser.DeclareFunctionContext ctx) {
         String functionName = ctx.NAME().getText();
         String returnType = ctx.functionStatement().type().getText();
+        boolean isStatic = ctx.STATIC() != null;
         ArrayList<String> params = visitParamList(ctx.functionStatement().paramList());
         FunctionDescriptor function =
-                new FunctionDescriptor(functionName, classHeader.getClassName(), params, returnType);
+                new FunctionDescriptor(functionName, classHeader.getClassName(), params, returnType, isStatic);
 
         classHeader.addFunction(function);
 

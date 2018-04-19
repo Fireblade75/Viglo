@@ -37,7 +37,11 @@ public class FunctionCall extends ExprComponent {
 
             asm.addAll(NumberConverter.loadExpr(expr, exprType, paramType));
         }
-        asm.add("\tinvokevirtual " + function.getJasminCall());
+        if(function.isStatic()) {
+            asm.add("\tinvokestatic " + function.getJasminCall());
+        } else {
+            asm.add("\tinvokevirtual " + function.getJasminCall());
+        }
         return asm;
     }
 }

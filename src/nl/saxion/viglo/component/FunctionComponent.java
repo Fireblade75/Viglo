@@ -10,12 +10,16 @@ import java.util.ArrayList;
 public class FunctionComponent implements VigloComponent {
 
     private final FunctionExpression function;
+    private final Scope scope;
+    private final boolean isStatic;
     private String name;
     private boolean constructor = false;
 
-    public FunctionComponent(String name, FunctionExpression function, Scope scope) {
+    public FunctionComponent(String name, FunctionExpression function, Scope scope, boolean isStatic) {
         this.name = name;
         this.function = function;
+        this.scope = scope;
+        this.isStatic = isStatic;
     }
 
 
@@ -29,7 +33,9 @@ public class FunctionComponent implements VigloComponent {
         String paramTypes = function.getParamList().asJasminList();
         String functionName = constructor ? "<init>" : name;
 
-        asm.add(".method public " + functionName + "(" + paramTypes + ")" + returnType);
+        String functionLine = ".method " + (isStatic ? "static public " : "public ");
+
+        asm.add(functionLine + functionName + "(" + paramTypes + ")" + returnType);
         asm.add("\t.limit stack 10");
         asm.add("\t.limit locals " + locals);
 

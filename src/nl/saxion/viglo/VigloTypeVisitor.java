@@ -57,7 +57,8 @@ public class VigloTypeVisitor extends VigloBaseVisitor<String> {
 
     @Override
     public String visitDeclareFunction(VigloParser.DeclareFunctionContext ctx) {
-        scope = new Scope(globalScope);
+        boolean isStatic = ctx.STATIC() != null;
+        scope = new Scope(globalScope, isStatic);
         visit(ctx.functionStatement());
         scope.close();
         return "function";

@@ -56,7 +56,7 @@ elseStatement: ( ':' block);
 
 forStatement: FOR NAME IN exp block;
 
-declareFunction: FUNC NAME functionStatement;
+declareFunction: STATIC? FUNC NAME functionStatement;
 functionStatement: paramList ':' type '=>' block;
 functionCall: NAME '(' (exp (',' exp)*)? ')';
 paramList: '(' (paramItem (',' paramItem)*)? ')';
@@ -143,6 +143,7 @@ FUNC: 'func';
 IMPORT: 'import';
 WHILE: 'while';
 DO: 'do';
+STATIC: 'static';
 
 IF_MARK: '?';
 FOR: 'for';

@@ -10,13 +10,15 @@ public class FunctionDescriptor {
     private String name;
     private String className;
     private String returnType;
+    private boolean isStatic;
     private ArrayList<String> paramTypes = new ArrayList<>();
 
-    public FunctionDescriptor(String name, String className, ArrayList<String> paramTypes, String returnType) {
+    public FunctionDescriptor(String name, String className, ArrayList<String> paramTypes, String returnType, boolean isStatic) {
         this.name = name;
         this.className = className;
         this.paramTypes = paramTypes;
         this.returnType = returnType;
+        this.isStatic = isStatic;
     }
 
     public FunctionDescriptor(FunctionComponent function, String className) {
@@ -84,5 +86,9 @@ public class FunctionDescriptor {
             }
         }
         return sb.append(")").toString();
+    }
+
+    public boolean isStatic() {
+        return isStatic;
     }
 }

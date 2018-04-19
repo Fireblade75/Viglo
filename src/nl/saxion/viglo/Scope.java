@@ -18,8 +18,11 @@ public class Scope {
     private int labelCounter = 0;
     private ArrayList<Scope> children = new ArrayList<>();
 
-    public Scope(GlobalScope globalScope) {
+    public Scope(GlobalScope globalScope, boolean isStatic) {
         this.globalScope = globalScope;
+        if(!isStatic) {
+            addValue("this", new Value("object", true));
+        }
     }
 
     public Scope(Scope scope) {
@@ -67,7 +70,7 @@ public class Scope {
 
     public int getIndex(String label) {
         if (labelList.contains(label)) {
-            return labelList.indexOf(label) + 1;
+            return labelList.indexOf(label);
         }
         return -1;
     }

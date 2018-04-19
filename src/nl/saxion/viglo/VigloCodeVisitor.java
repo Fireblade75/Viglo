@@ -78,9 +78,10 @@ public class VigloCodeVisitor extends VigloBaseVisitor<VigloComponent> {
     @Override
     public VigloComponent visitDeclareFunction(VigloParser.DeclareFunctionContext ctx) {
         String name = ctx.NAME().getText();
-        scope = new Scope(globalScope);
+        boolean isStatic =ctx.STATIC() != null;
+        scope = new Scope(globalScope, isStatic);
         FunctionExpression functionExpression = visitFunctionStatement(ctx.functionStatement());
-        FunctionComponent functionComponent = new FunctionComponent(name, functionExpression, scope);
+        FunctionComponent functionComponent = new FunctionComponent(name, functionExpression, scope, isStatic);
         scope.close();
         return functionComponent;
     }
