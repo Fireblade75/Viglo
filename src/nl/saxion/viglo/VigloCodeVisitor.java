@@ -55,6 +55,7 @@ public class VigloCodeVisitor extends VigloBaseVisitor<VigloComponent> {
     @Override
     public VigloComponent visitStructBlock(VigloParser.StructBlockContext ctx) {
         globalScope = new GlobalScope(className, classHeader);
+        scope = new Scope(globalScope, false);
         className = "viglo/" +ctx.NAME().getText();
         BlockComponent blockComponent = visitBlock(ctx.block());
         return new StructComponent(className, blockComponent);
@@ -90,6 +91,7 @@ public class VigloCodeVisitor extends VigloBaseVisitor<VigloComponent> {
     public FunctionExpression visitFunctionStatement(VigloParser.FunctionStatementContext ctx) {
         ParamList paramList = visitParamList(ctx.paramList());
         String returnType = ctx.type().getText();
+        scope.setReturnType(returnType);
         FunctionExpression functionExpression = new FunctionExpression(paramList, returnType, scope);
         functionExpression.setBlock(visitBlock(ctx.block()));
         return functionExpression;
@@ -285,6 +287,6 @@ public class VigloCodeVisitor extends VigloBaseVisitor<VigloComponent> {
 
     @Override
     public ReturnStatement visitReturnStatement(VigloParser.ReturnStatementContext ctx) {
-        return new ReturnStatement((ExprComponent) visit(ctx.exp()), scope);
+        return new ReturnStatement((ExprComponent) visit(ctx.exp()), scope, scope.getReturnType());
     }
 }

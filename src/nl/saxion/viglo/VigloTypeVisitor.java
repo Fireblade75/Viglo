@@ -40,6 +40,7 @@ public class VigloTypeVisitor extends VigloBaseVisitor<String> {
     public String visitStructBlock(VigloParser.StructBlockContext ctx) {
         className = "viglo/" + ctx.NAME().getText();
         globalScope = new GlobalScope(className, classHeader);
+        scope = new Scope(globalScope, false);
         visit(ctx.block());
         return "struct";
     }
@@ -66,6 +67,7 @@ public class VigloTypeVisitor extends VigloBaseVisitor<String> {
 
     @Override
     public String visitFunctionStatement(VigloParser.FunctionStatementContext ctx) {
+        scope.setReturnType(ctx.type().getText());
         for(VigloParser.ParamItemContext paramItem : ctx.paramList().paramItem()) {
             visit(paramItem);
         }
@@ -83,10 +85,29 @@ public class VigloTypeVisitor extends VigloBaseVisitor<String> {
 
     @Override
     public String visitBlock(VigloParser.BlockContext ctx) {
+        boolean functionScope = !scope.hasParent();
+        String functionType = scope.getReturnType();
         for(VigloParser.StatementContext statment : ctx.statement()) {
             visit(statment);
         }
+        for (int i = 0; i < ctx.statement().size(); i++) {
+            if(!functionType.equals("void") && i == ctx.statement().size() - 1 && functionScope) {
+                if(ctx.statement(i).returnStatement() == null) {
+                    throw new CompilerException(ctx.statement(i), "Expected return statement");
+                }
+            }
+        }
         return "block";
+    }
+
+    @Override
+    public String visitReturnStatement(VigloParser.ReturnStatementContext ctx) {
+        String expType = visit(ctx.exp());
+        String functionType = scope.getReturnType();
+        if(!expType.equals(functionType) && !TypeConverter.canFreelyCast(expType, functionType)) {
+            throw new CompilerException(ctx.exp(), "Cannot return " + expType +" expected a " + functionType);
+        }
+        return super.visitReturnStatement(ctx);
     }
 
     @Override

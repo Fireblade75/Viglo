@@ -23,6 +23,27 @@ public class TypeConverter {
         }
     }
 
+    public static String toRawType(String type) {
+        switch (type) {
+            case "void":
+                return "void";
+            case "int":
+                return "int";
+            case "long":
+                return "long";
+            case "float":
+                return "float";
+            case "double":
+                return "double";
+            case "bool":
+                return "int";
+            case "char":
+                return "int";
+            default:
+                return type;
+        }
+    }
+
     public static boolean isNumber(String type) {
         return type.equals("double") || type.equals("float") || type.equals("long") || type.equals("int");
     }

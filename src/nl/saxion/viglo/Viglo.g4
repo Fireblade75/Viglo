@@ -100,7 +100,7 @@ COMMENT: ( '~' ~[\r\n]* '\r'? '\n'
          ) -> channel(HIDDEN);
 
 INT_LITERAL: [1-9][0-9]* | '0';
-FLOAT_LITERAL: [0-9]+'.'[0-9]+'f';
+FLOAT_LITERAL: [0-9]+('.'[0-9]+)?'f';
 DOUBLE_LITERAL: [0-9]+'.'[0-9]+;
 LONG_LITERAL: [1-9][0-9]*'l' | '0l';
 BOOL_LITERAL: 'true' | 'false';

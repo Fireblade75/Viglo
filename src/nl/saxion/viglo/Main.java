@@ -14,10 +14,34 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public class Main {
-    public Main(String[] args) {
 
+    private String sourceFileName;
+    private String destFileName = null;
+
+    public Main(String[] args) {
+        if (args.length == 0) {
+            System.out.println("Usage: java -jar viglo.jar v-file");
+            System.out.println("   Or: java -jar viglo.jar -o j-file v-file");
+        } else {
+            sourceFileName = args[0];
+            boolean err = false;
+            if (args.length >= 3) {
+                if (args[1].equals("-o")) {
+                    destFileName = args[2];
+                } else {
+                    System.err.println("Unsupported operation: " + args[1]);
+                    err = true;
+                }
+            }
+
+            if (!err) {
+                compileCode();
+            }
+        }
+    }
+
+    public void compileCode() {
         String compileString = readCode();
-        String name = "xName";
 
         // Create lexer and run scanner to create stream of tokens
         CharStream charStream = CharStreams.fromString(compileString);
@@ -31,8 +55,8 @@ public class Main {
         parser.addErrorListener(errorListener);
         ParseTree program = parser.program();
 
-        if(errorListener.hasSyntaxErrors()) {
-            for(SyntaxError syntaxError : errorListener.getSyntaxErrors()) {
+        if (errorListener.hasSyntaxErrors()) {
+            for (SyntaxError syntaxError : errorListener.getSyntaxErrors()) {
                 System.out.println("Error: " + syntaxError);
             }
         } else {
@@ -49,7 +73,13 @@ public class Main {
                 typeChecker.visit(program);
                 ArrayList<String> prog = visitor.visit(program).generateCode();
 
-                System.out.println(prog.stream().collect(Collectors.joining("\n")));
+                String code = prog.stream().collect(Collectors.joining("\n"));
+
+                if(destFileName == null) {
+                    System.out.println(code);
+                } else {
+                    writeCode(code);
+                }
             } catch (CompilerException e) {
                 System.out.println("Error: " + e.getMessage());
             }
@@ -58,7 +88,7 @@ public class Main {
 
     private String readCode() {
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(new File("code.v")));
+            BufferedReader reader = new BufferedReader(new FileReader(new File(sourceFileName)));
             String line;
             StringBuilder code = new StringBuilder();
             while ((line = reader.readLine()) != null) {
@@ -67,6 +97,15 @@ public class Main {
             return code.toString();
         } catch (IOException e) {
             return null;
+        }
+    }
+
+    private void writeCode(String code) {
+        try {
+            FileWriter writer = new FileWriter(new File(destFileName));
+            writer.write(code);
+        } catch (IOException e) {
+            System.err.println("Could not write to file: " + destFileName);
         }
     }
 

@@ -17,6 +17,7 @@ public class Scope {
     private int childLocals = 0;
     private int labelCounter = 0;
     private ArrayList<Scope> children = new ArrayList<>();
+    private String returnType;
 
     public Scope(GlobalScope globalScope, boolean isStatic) {
         this.globalScope = globalScope;
@@ -154,5 +155,17 @@ public class Scope {
      */
     private void addChild(Scope scope) {
         children.add(scope);
+    }
+
+    public void setReturnType(String returnType) {
+        this.returnType = returnType;
+    }
+
+    public String getReturnType() {
+        if (hasParent()) {
+            return parent.getReturnType();
+        } else {
+            return returnType;
+        }
     }
 }

@@ -78,14 +78,14 @@ public class FunctionDescriptor {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("function (");
+        StringBuilder sb = new StringBuilder("func(");
         for (int i = 0; i < paramTypes.size(); i++) {
             sb.append(paramTypes.get(i));
             if(i != paramTypes.size() - 1) {
                 sb.append(",");
             }
         }
-        return sb.append(")").toString();
+        return sb.append("):").append(returnType).toString();
     }
 
     public boolean isStatic() {
