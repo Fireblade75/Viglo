@@ -1,0 +1,15 @@
+{
+    "version": "2.0.0",
+    "configurations": [
+        {
+            "name": "Debug ANTLR4 grammar",
+            "type": "antlr-debug",
+            "request": "launch",
+            "input": "code.v",
+            "grammar": "src/main/antlr4/nl/firepy/viglo/compiler/Viglo.g4",
+            "startRule": "program",
+            "printParseTree": true,
+            "visualParseTree": true
+        }
+    ]
+}
