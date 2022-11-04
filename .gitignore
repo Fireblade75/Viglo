@@ -165,13 +165,14 @@ bild_output.txt
 runtime/Cpp/demo/generated
 xcuserdata
 *.jar
-.vscode
 
-# VSCode Java plugin temporary files
-javac-services.0.log
-javac-services.0.log.lck
-
-code.v
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
 
 # Maven
 target/
@@ -194,3 +195,6 @@ buildNumber.properties
 
 # ANTLR
 .antlr
+
+# Example Viglo File
+code.v
